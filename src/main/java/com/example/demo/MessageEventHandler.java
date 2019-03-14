@@ -66,6 +66,7 @@ public class MessageEventHandler {
 //        System.out.println(uuid.toString());
 //        System.out.println(client.getSessionId().toString());
 //        System.out.println(client.getSessionId().equals(uuid));
+        System.out.println(client.getSessionId().equals(uuid));
         if (uuid == null || !client.getSessionId().equals(uuid)) {
             System.out.println("uuid?");
         } else {
