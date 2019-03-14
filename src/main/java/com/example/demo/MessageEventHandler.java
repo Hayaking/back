@@ -62,11 +62,7 @@ public class MessageEventHandler {
     public void onEvent(SocketIOClient client, AckRequest request, Message message) {
         UUID uuid = poll.get(message.getAccount());
         System.out.println("客户端:" + client.getSessionId() + " 发来消息：" + message.toString());
-//        System.out.println(uuid==null);
-//        System.out.println(uuid.toString());
-//        System.out.println(client.getSessionId().toString());
-//        System.out.println(client.getSessionId().equals(uuid));
-        System.out.println(client.getSessionId().equals(uuid));
+
         if (uuid == null || !client.getSessionId().equals(uuid)) {
             System.out.println("uuid?");
         } else {
