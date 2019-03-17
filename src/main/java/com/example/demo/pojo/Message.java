@@ -186,7 +186,7 @@ public class Message {
         RECEIVED, SEND,
         GET_USER, GOT_USER,
         LOGIN, LOGIN_SUCCESS, LOGIN_FAILED,
-        SIGN, SIGN_SUCCESS,
+        SIGN, SIGN_SUCCESS, SIGN_FAILED,
         GET_CONTACT, GOT_CONTACT,
         ADD,
         ACCEPT, ACCEPTED,

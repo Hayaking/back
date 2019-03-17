@@ -7,12 +7,10 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
-    @Column(length = 40)
-    private String _id;
     @Column(length = 40)
     private String name;
     @Column(length = 40)
@@ -20,21 +18,14 @@ public class User {
     private String ip;
     private Integer port;
     private int role;
+
     public User() {
     }
 
     public User(String name, String psw) {
         this.name = name;
         this.psw = psw;
-    }
-
-
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
+        this.role=0;
     }
 
     public String getName() {
@@ -82,8 +73,7 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return role == user.role &&
-                Objects.equals(get_id(), user.get_id()) &&
+        return getRole() == user.getRole() &&
                 Objects.equals(getName(), user.getName()) &&
                 Objects.equals(getPsw(), user.getPsw()) &&
                 Objects.equals(getIp(), user.getIp()) &&
@@ -92,14 +82,13 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(get_id(), getName(), getPsw(), getIp(), getPort(), role);
+        return Objects.hash(getName(), getPsw(), getIp(), getPort(), getRole());
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "_id='" + _id + '\'' +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", psw='" + psw + '\'' +
                 ", ip='" + ip + '\'' +
                 ", port=" + port +

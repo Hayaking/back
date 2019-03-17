@@ -9,6 +9,7 @@ import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
 import com.example.demo.dao.UserRepository;
 import com.example.demo.pojo.Message;
+import com.example.demo.pojo.User;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,13 +25,12 @@ import static com.example.demo.pojo.Message.TYPE.*;
 
 @Component
 public class MessageEventHandler {
-    private static SocketIOServer socketIoServer;
-    static ArrayList<UUID> listClient = new ArrayList<>();
-    static final int limitSeconds = 60;
-    private static HashMap<String, UUID> poll = new HashMap<>();
     @Resource
     private UserRepository userRepository;
+    private static SocketIOServer socketIoServer;
+    public static HashMap<String, UUID> poll = new HashMap<>();
     private static Gson gson = new Gson();
+
     @Autowired
     public MessageEventHandler(SocketIOServer server) {
         socketIoServer = server;
@@ -38,21 +38,14 @@ public class MessageEventHandler {
 
     @OnConnect
     public void onConnect(SocketIOClient client) {
-        listClient.add(client.getSessionId());
         System.out.println("客户端:" + client.getSessionId() + "已连接");
-
-//        poll.put()
     }
 
     @OnDisconnect
     public void onDisconnect(SocketIOClient client) {
         System.out.println("客户端:" + client.getSessionId() + "断开连接");
-//        for (Map.Entry<String, UUID> entry : poll.entrySet()) {
-//            if (client.getSessionId().equals(entry.getValue())) {
-//                poll.remove(entry.getKey());
-//            }
-//        }
     }
+
     /**收到消息，将name作为key，uuid作为val，存入poll中
      * @param client
      * @param request
@@ -60,14 +53,13 @@ public class MessageEventHandler {
      */
     @OnEvent(value = "sendMessage")
     public void onEvent(SocketIOClient client, AckRequest request, Message message) {
-        UUID uuid = poll.get(message.getAccount());
+        UUID uuid = poll.get(message.getTo());
         System.out.println("客户端:" + client.getSessionId() + " 发来消息：" + message.toString());
-
-        if (uuid == null || !client.getSessionId().equals(uuid)) {
+        if (uuid == null ) {
             System.out.println("uuid?");
         } else {
             message.setType(RECEIVED);
-            sendBuySingleEvent(message,client.getSessionId());
+            sendBuySingleEvent(message,uuid);
         }
     }
 
@@ -77,6 +69,7 @@ public class MessageEventHandler {
         Message res;
         if (userRepository.queryUserByNameAndPsw(message.getAccount(), message.getPassword())!= null) {
             poll.put(message.getAccount(), client.getSessionId());
+            System.out.println(message.getAccount()+","+ client.getSessionId()+"上线了！");
             res = new Message()
                     .setAccount(message.getAccount())
                     .setType(LOGIN_SUCCESS);
@@ -87,6 +80,34 @@ public class MessageEventHandler {
         }
         sendBuySingleEvent(res,client.getSessionId());
     }
+    @OnEvent(value = "signMessage")
+    public void sign(SocketIOClient client, AckRequest request, Message message) {
+        System.out.println("客户端:" + client.getSessionId() + " 发来消息：" + message.toString());
+        Message res;
+        if (userRepository.queryUserByName(message.getAccount()) != null) {
+            res = new Message().setType(SIGN_FAILED);
+        } else {
+            userRepository.saveAndFlush(new User(message.getAccount(), message.getPassword()));
+            res = new Message().setType(SIGN_SUCCESS);
+        }
+        sendBuySingleEvent(res,client.getSessionId());
+    }
+
+    @OnEvent(value = "logoffMessage")
+    public void logoff(SocketIOClient client, AckRequest request, Message message) {
+        System.out.println("客户端:" + client.getSessionId() + " 发来消息：" + message.toString());
+        UUID uuidFromMsg = poll.get(message.getAccount());
+        UUID uuidFromClient = client.getSessionId();
+        if (uuidFromClient.equals(uuidFromMsg)) {
+            poll.remove(message.getAccount());
+            System.out.println(message.getAccount() + "下线了");
+        }
+//        sendBuySingleEvent(res,client.getSessionId());
+    }
+
+
+
+
 //
 //    //群聊,向所有id不为null的推送消息
 //    public static void sendBuyLogEvent(String text) {   //这里就是向客户端推消息了
