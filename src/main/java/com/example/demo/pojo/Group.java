@@ -3,15 +3,17 @@ package com.example.demo.pojo;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "_group")
-public class Group {
+public class Group implements Contact{
     @Id
     private int _id;
     private String name;
     private int count_p;
-
+    @Transient
+    private String type = "group";
     public Group() {
     }
 

@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.demo.pojo.Message.TYPE.*;
 
@@ -105,7 +102,23 @@ public class MessageEventHandler {
 //        sendBuySingleEvent(res,client.getSessionId());
     }
 
-
+    @OnEvent(value = "groupMessage")
+    public void group(SocketIOClient client, AckRequest request, Message message) {
+        System.out.println("客户端:" + client.getSessionId() + " 发来消息：" + message.toString());
+        UUID uuidFromMsg = poll.get(message.getAccount());
+        UUID uuidFromClient = client.getSessionId();
+        List<User> users = null;
+        if (uuidFromClient.equals(uuidFromMsg)) {
+            users = userRepository.findAllByGroupId(Integer.parseInt(message.getTo()));
+            message.setType(RECEIVED).setToken("");
+            UUID to;
+            for (User u:users) {
+                to = poll.get(u.getName());
+                if (to != null && to != uuidFromClient)
+                    sendBuySingleEvent(message,to);
+            }
+        }
+    }
 
 
 //

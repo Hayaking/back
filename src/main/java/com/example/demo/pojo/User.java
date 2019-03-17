@@ -1,24 +1,21 @@
 package com.example.demo.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Contact{
 
     @Id
     @Column(length = 40)
     private String name;
     @Column(length = 40)
     private String psw;
-    private String ip;
-    private Integer port;
-    private int role;
 
+    private int role;
+    @Transient
+    private String type = "user";
     public User() {
     }
 
@@ -44,21 +41,7 @@ public class User {
         this.psw = psw;
     }
 
-    public String getIp() {
-        return ip;
-    }
 
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
 
     public int getRole() {
         return role;
@@ -69,6 +52,16 @@ public class User {
     }
 
     @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", psw='" + psw + '\'' +
+                ", role=" + role +
+                ", type='" + type + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
@@ -76,23 +69,11 @@ public class User {
         return getRole() == user.getRole() &&
                 Objects.equals(getName(), user.getName()) &&
                 Objects.equals(getPsw(), user.getPsw()) &&
-                Objects.equals(getIp(), user.getIp()) &&
-                Objects.equals(getPort(), user.getPort());
+                Objects.equals(type, user.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getPsw(), getIp(), getPort(), getRole());
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", psw='" + psw + '\'' +
-                ", ip='" + ip + '\'' +
-                ", port=" + port +
-                ", role=" + role +
-                '}';
+        return Objects.hash(getName(), getPsw(), getRole(), type);
     }
 }
