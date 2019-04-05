@@ -35,4 +35,11 @@ public class ContactController {
         }
         return null;
     }
+    @GetMapping("/search")
+    public Object search(String token,String name) {
+        if (token.equals(MessageEventHandler.poll.get(name).toString())) {
+            return userRepository.queryUserByName(name).toString();
+        }
+        return null;
+    }
 }
