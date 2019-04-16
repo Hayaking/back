@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Scanner;
+
 @SpringBootApplication
 @EnableWebMvc
 public class DemoApplication {
@@ -15,6 +17,7 @@ public class DemoApplication {
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
+
     @Bean
     public SocketIOServer socketIOServer() {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
@@ -40,9 +43,7 @@ public class DemoApplication {
 			}
 		});*/
 
-
         final SocketIOServer server = new SocketIOServer(config);
-
         return server;
     }
 

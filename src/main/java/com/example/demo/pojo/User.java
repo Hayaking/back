@@ -1,5 +1,7 @@
 package com.example.demo.pojo;
 
+import com.google.common.base.MoreObjects;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -37,11 +39,10 @@ public class User implements Contact{
         return psw;
     }
 
-    public void setPsw(String psw) {
+    public User setPsw(String psw) {
         this.psw = psw;
+        return this;
     }
-
-
 
     public int getRole() {
         return role;
@@ -53,12 +54,17 @@ public class User implements Contact{
 
     @Override
     public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", psw='" + psw + '\'' +
-                ", role=" + role +
-                ", type='" + type + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("\"name\":\"")
+                .append(name).append('\"');
+        sb.append(",\"psw\":\"")
+                .append(psw).append('\"');
+        sb.append(",\"role\":")
+                .append(role);
+        sb.append(",\"type\":\"")
+                .append(type).append('\"');
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override

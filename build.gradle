@@ -36,5 +36,7 @@ dependencies {
 
     implementation group: 'com.corundumstudio.socketio', name: 'netty-socketio', version: '1.7.17'
     implementation 'com.google.code.gson:gson:2.8.5'
+//    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '2.1.4.RELEASE'
+
 
 }
